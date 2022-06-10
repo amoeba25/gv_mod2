@@ -1,0 +1,36 @@
+{% extends "../base/base.html" %}
+
+    {% block tite %}
+        Lead home
+    {% endblock tite %}
+
+    {% block content %}
+
+    <div>
+        <h1>Leads</h1>
+        <a href="add/">add</a>
+    </div>
+    <table class="table">
+        <tr>
+            <th>Company</th>
+            <th>Source</th>
+            <th>Owner</th>
+            <th>Phone</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+        {% for lead in leads %}
+            <tr>
+                <td> <a href="{% url 'viewContact' pk=lead.id %}"> {{ lead.company }} </a> </td>
+                <td> {{ lead.source }}</td>
+                <td> {{ lead.owner }}</td>
+                <td> {{ lead.phone }}</td>
+                <td> {{ lead.status }}</td>
+                <td>
+                    <a href="{% url 'updateLead' pk=lead.id %}" class="me-2"> edit </a>
+                    <a href="{% url 'removeLead' pk=lead.id %}"> delete </a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    {% endblock content %}

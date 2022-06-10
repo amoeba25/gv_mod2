@@ -1,0 +1,159 @@
+{% extends "./detailBase.html" %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+
+    {{block.super}}
+
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+        Add
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST" id="contactForm">
+                <div class="modal-body">
+                    {% csrf_token %}
+                    {{ contactForm|crispy }}
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Submit</button>
+                </div>
+        </form>
+        </div>
+        </div>
+    </div>
+
+     
+
+    <table class="table" id="contactTable">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Job Title</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <!-- <th>Status</th>
+                <th>Action</th> -->
+            </tr>
+        </thead>
+
+        <tbody id="contactTableId">
+            
+        </tbody>
+        
+    </table>
+
+{% endblock content %}
+
+{% block script %}
+    <script>
+
+        let contactList = [];
+        $(document).ready(()=>{
+            getAllContact();
+        })
+
+        //fetching all contacts
+        function getAllContact(){
+            $.ajax({
+                method: "GET",
+                url: "contact/all"
+            })
+            .done(response => {
+                const tempContacts = JSON.parse(response);
+                contactList = tempContacts;
+                contactList = contactList.map(e=> e.fields);
+                renderContactTable();
+            })
+        }
+
+        //rendering all contacts to the page
+        function renderContactTable() {
+            let tableBody = document.getElementById("contactTableId");
+            tableBody.remove();
+
+            let newBody = document.createElement('tbody');
+            newBody.id = "contactTableId";
+            document.getElementById("contactTable").append(newBody); 
+
+            //contact list
+            contactList.forEach((contact)=> {
+
+                //new row added
+                const row = newBody.insertRow();
+
+                const f_name = insertItems(contact, "f_name");
+                const title = insertItems(contact , "title")
+                const email = insertItems(contact , "email")
+                const phone = insertItems(contact , "phone");
+                
+
+                row.appendChild(f_name);
+                row.appendChild(title);
+                row.appendChild(email);
+                row.appendChild(phone);
+
+
+            })
+        }
+
+        // helper function to insert itmes to the table
+        function insertItems(dict, item){
+
+            const itemRow = document.createElement("TD");
+            itemRow.innerHTML = dict[item];
+            return itemRow
+        }
+
+        //posting data 
+        function onContactFormSubmit(event) {
+
+
+            //read form data
+            event.preventDefault() //disallow page reload
+            const valuesinArray = $(this).serializeArray();
+            const body = {};
+
+            valuesinArray.forEach(e=> {
+                body[e.name] = e.value;
+            })
+
+            $.ajax({
+                method: "POST", 
+                url: "contact/add",
+                data: body
+            })
+            .done(response => {
+                console.log(response);
+                event.target.reset();
+
+                contactList.push(response);
+                
+                
+                renderContactTable();
+            })
+            .fail(response => {
+                console.log(response);
+            })
+
+        }
+
+        $("#contactForm").submit(onContactFormSubmit); 
+
+        // deleting data
+        function deleteContact(event) {
+            
+        }
+
+    </script>
+{% endblock script %}

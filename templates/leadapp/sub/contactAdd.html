@@ -1,0 +1,14 @@
+{% extends "./detailBase.html" %}
+
+{% block content %}
+
+    {{block.super}}
+    <h2>Add contact</h2>
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="submit">
+    </form>
+    
+
+{% endblock content %}

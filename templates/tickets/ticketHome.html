@@ -1,0 +1,40 @@
+{% extends "../base/base.html" %}
+
+    {% block tite %}
+      Ticket home
+    {% endblock tite %}
+
+    {% block content %}
+      
+        <div>
+            <h1>Ticket home</h1>
+            <a href="add/">add</a>
+        </div>
+        <table class="table">
+            <tr>
+                <th>Ticket id</th>
+                <th>Title</th>
+                <th>Client</th>
+                <th>Type</th>
+                <th>Assigned To</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+            {% for ticket in tickets %}
+                <tr>
+                    <td> {{ ticket.id }} </td>
+                    <td> {{ ticket.title }}</td>
+                    <td> {{ ticket.client }}</td>
+                    <td> {{ ticket.type }}</td>
+                    <td> {{ ticket.assigned }}</td>
+                    <td> {{ ticket.status }}</td>
+                    <td>
+                        <a href="{% url 'updateTickets' pk=ticket.id %}" class="me-2"> edit </a>
+                        <a href="{% url 'removeTickets' pk=ticket.id %}" class="me-2"> delete </a>
+                        <a href="{% url 'statusTicket' pk=ticket.id %}" class="me-2"> status </a>
+                        <a href="{% url 'assignTicket' pk=ticket.id %}"> assign </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endblock content %}

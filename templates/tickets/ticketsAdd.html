@@ -1,0 +1,14 @@
+{% extends "../base/base.html" %}
+
+    {% block tite %}
+        Ticket add
+    {% endblock tite %}
+
+    {% block content %}
+        <h1>Add ticket</h1>
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" value="submit">
+        </form>
+    {% endblock content %}
